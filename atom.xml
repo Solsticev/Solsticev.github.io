@@ -6,7 +6,7 @@
   <link href="https://solsticev.github.io/atom.xml" rel="self"/>
   
   <link href="https://solsticev.github.io/"/>
-  <updated>2024-02-27T11:39:01.359Z</updated>
+  <updated>2024-02-28T11:40:32.339Z</updated>
   <id>https://solsticev.github.io/</id>
   
   <author>
@@ -21,11 +21,19 @@
     <link href="https://solsticev.github.io/2024/02/27/%E8%AE%BA%E6%96%87%E6%80%BB%E7%BB%93/"/>
     <id>https://solsticev.github.io/2024/02/27/%E8%AE%BA%E6%96%87%E6%80%BB%E7%BB%93/</id>
     <published>2024-02-27T11:39:01.000Z</published>
-    <updated>2024-02-27T11:39:01.359Z</updated>
+    <updated>2024-02-28T11:40:32.339Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="the-role-foundation-models-in-neuro-symbolic-learning-and-reasoning"><a class="markdownIt-Anchor" href="#the-role-foundation-models-in-neuro-symbolic-learning-and-reasoning"></a> The Role Foundation Models in Neuro-Symbolic Learning and Reasoning</h2><p>这篇文章提出了一个新的结合神经网络和符号计算的架构NeSyGPT,原理是通过BLIP模型（可以处理图像和文本的配对）提取原始数据中的特征，使用BLIP提取到的信息构建逻辑符号在LAS符号学习器中进行假设的推演。</p><p>具体来说，该架构分为两部分，第一部分是使用BLIP提取关于图片相关的信息，第二部分是将提取到的信息进行符号表示并根据提供的背景知识生成逻辑假设。</p><p>首先需要对BLIP进行微调以更好地提取信息。微调的方式是人工设计或者大语言模型生成一系列关于图片内容的相关问题以及对应答案，使得BLIP将问题与答案尽量对齐。</p><p>得到微调后的BLIP后就可以使用BLIP来提取信息了，并将提取到的信息应用于LAS符号学习器以解决下游任务。</p><div align=center><img src=NeSyGPT.png width=80%></div><p>考虑如下任务：输入<strong>四张扑克牌的图片</strong>和<strong>每张扑克牌的所属玩家</strong>，以及<strong>获胜玩家</strong>和使用一阶逻辑表示相关<strong>背景知识</strong><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>B</mi></mrow><annotation encoding="application/x-tex">B</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span></span></span></span>，生成谁是赢家的一阶逻辑规则。这个任务可以很好地使用上述架构解决。首先，输入4张图片，对于每张图片NeSyGPT首先使用微调好的BLIP询问每张图片的花色和点数信息并给出答案（具体询问什么问题需要根据任务本身来指定，可以人工设计也可以使用大语言模型生成）。得到的答案就可以作为图片的特征，结合牌的所属玩家和标签信息（即谁是赢家），训练一个LAS符号学习器，该符号学习器可以根据背景知识<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>B</mi></mrow><annotation encoding="application/x-tex">B</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span></span></span></span>和BLIP得到的信息生成以一阶逻辑表示的假设规则（有些像ILP？）。</p><h2 id="neural-networks-for-abstraction-and-reasoning-towards-broad-generalization-in-machines"><a class="markdownIt-Anchor" href="#neural-networks-for-abstraction-and-reasoning-towards-broad-generalization-in-machines"></a> Neural networks for abstraction and reasoning: Towards broad generalization in machines</h2><p>这篇文章提出了一种叫感知抽象与推理语言（PeARL），使用这种语言DreamCoder可以自动生成解决ARC任务的代码。ARC任务有点像IQ测试题，因为样本量比较少而且假设空间复杂难以使用概率模型进行解决，但是人使用推理能力能解决，所以这类问题可以用来测试机器的“推理能力”。DreamCoder是自动生成DSL（Domain-Specific Language）的算法。一个DSL如下：</p><div align=center><img src=DSL.png width=60%></div><p>设<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>X</mi></mrow><annotation encoding="application/x-tex">X</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.07847em;">X</span></span></span></span>是ARC任务的集合，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi><mo>∈</mo><mi>X</mi></mrow><annotation encoding="application/x-tex">x\in X</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.07847em;">X</span></span></span></span>是ARC中的一个任务，其中包含多个图片对，测试者需要根据给定的图片推理出图片对间的转化关系，一些ARC任务如下图：</p><div align=center><img src=ARC.png width=60%></div><p>DreamCoder的原理总结如下：DreamCoder分为三个阶段，第一个阶段称为“waking phase”，在该阶段DreamCoder会生成很多的程序，判断程序是否解决了某个任务（解决任务是指给定新的图片正确预测其对应的图片对），并保存能解决问题的程序。这是一个暴力搜索的过程，但是较短的程序会被优先考虑，基于奥卡姆剃刀原理。</p><p>DreamCoder的核心是“Abstraction Sleep”和“Dreaming Sleep”阶段。Abstraction Sleep阶段会对waking阶段生成的程序进行重构（refactoring）操作，如：假设使用翻转操作<strong>解决了</strong>某一个任务，就在翻转操作的基础上加入其他操作。在3步之内重构的程序会被暂时保留，如果有<strong>解决了</strong>其它任务的程序经过重构也得到了<strong>相同程序</strong>，换句话说，由两种waking阶段保留的不同的程序经过重构得到了相同的程序，那么就将这个相同的程序视为primitive，并在下一步waking阶段当做原子操作搜索新的程序。直观上来看，这个相同的程序可以视为<strong>不同任务间相同的概念</strong>。</p><p>在waking phase阶段的搜索空间是巨大的，为了进行启发式搜索，Dreaming Sleep阶段通过训练一个神经网络辅助搜索方向。该神经网络的输入是任务对，输出是一个程序。这个神经网络的功能很像蒙特卡洛树搜索中的评估函数，可以进行大量剪枝。</p><p>使用该方法在ARC任务上进行实验，在ARC简单任务上的正确率为16.5%，在ARC困难任务上的准确率为4.5%，虽然不及手工设计操作的算法，但是对于非手工设计的方法正确率高出很多。</p>]]></content>
+    
+    
+    <summary type="html">对读过的论文进行总结</summary>
     
     
     
+    <category term="学习记录" scheme="https://solsticev.github.io/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/"/>
     
+    
+    <category term="AI技术" scheme="https://solsticev.github.io/tags/AI%E6%8A%80%E6%9C%AF/"/>
     
   </entry>
   
